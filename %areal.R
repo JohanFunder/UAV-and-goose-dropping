@@ -1,4 +1,4 @@
-## Areal for 10m skråmark sfghfdhdfghdfghfghfghdfghdfghdfghdfghdfgdfghdfghdfghdfghdfghdfghdfgh
+## Areal for 10m skråmark
 
 dir <- "G:/Projekter/Klim_holme_SKR_UTM10m"
 
