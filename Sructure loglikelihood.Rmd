@@ -1,0 +1,15 @@
+---
+title: "Skructure Loglikelihood"
+author: "Johan"
+date: "4 apr 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+x <-read.table('dog_wolfpop.txt',header = TRUE,sep='' , dec = '.')
+plot(x$LnP.D.)
+```
+
