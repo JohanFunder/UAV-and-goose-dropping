@@ -1,4 +1,4 @@
-## Areal for 10m skråmark
+## Areal for 10m skrÃ¥mark sfghfdhdfghdfghfghfghdfghdfghdfghdfghdfgdfghdfghdfghdfghdfghdfghdfgh
 
 dir <- "G:/Projekter/Klim_holme_SKR_UTM10m"
 
@@ -26,7 +26,7 @@ Field_area <- 27564.641
 
 sum/Field_area
 
-## Areal for 5m skråmark
+## Areal for 5m skrÃ¥mark
 dir <- "G:/Projekter/Klim_holme_SKR_UTM10m"
 
 areal <- file.path(dir,"5m_metadata_areal.csv")  
