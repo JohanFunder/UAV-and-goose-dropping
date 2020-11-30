@@ -1,0 +1,245 @@
+---
+title: "Untitled"
+author: "Jonas Gehrlein"
+date: "20 maj 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(here)
+```
+First load data from Data folder and calculate the density in each orthofoto
+FOr mark 1
+
+```{r}
+field_1 <- read.csv("G:/P8_projekt/Projekter/Prik_pr_billede/polypoints_m2_1.csv", sep = ',', dec = '.',
+                      header = TRUE)
+field_1$density <- field_1$droppings/field_1$m2
+mean(field_1$density)
+mean(field_1$density)
+
+```
+
+Then resample with replacement 100 times.
+This resampling is done with a sample size from 1 to 100% of the original dataset.
+
+```{r}
+N <- 100
+mean_dens <- matrix(,nrow = N, ncol = 100)
+for (t in 1:100){
+  for (i in 1:N){
+  dens<- sample(field_1$density, replace = TRUE, size = (t/100)*length(field_1$density))
+  mean_dens[i,t] <- mean(dens)
+  
+  }}
+gns <- rep(NA,100)
+afv <- rep(NA,100)
+confd <- rep(NA,100)
+for (i in 1:100){
+  gns[i] <- mean(mean_dens[,i])
+  afv[i] <- sd(mean_dens[,i])
+  confd[i] <- afv[i]/sqrt(100) * 1.96
+}
+gns
+afv 
+confd
+mean_dens[,i]
+```
+
+# Gør det med BCa bootstrap
+```{r}
+#install.packages("bootBCa", repos="http://R-Forge.R-project.org")
+library('bootBCa')
+
+
+boot.resamp <- cbind.data.frame(rep(NA,100),rep(NA,100),rep(NA,100))
+colnames(boot.resamp) <- c("mean","lowerCI","upperCI")
+for (i in 1:100){
+    boot <- BCa(mean_dens[,i],0.01,mean,
+                   alpha = c(0.025, 0.975),M = 100, Mlimit = 2000000)
+    boot <- cbind.data.frame(boot)
+    
+  boot.resamp$lowerCI[i] <- boot[4,]
+  boot.resamp$upperCI[i] <- boot[5,]
+  boot.resamp$mean[i] <- boot[3,]
+}
+
+boot.resamp
+```
+
+## Omregn til procenter (forsøg)
+```{r}
+
+boot.resamp_field_1 <- boot.resamp
+
+boot.resamp_field_1$mean.std <- (boot.resamp_field_1$mean-0.76)*100
+boot.resamp_field_1$lowerCI.std <- (boot.resamp_field_1$lowerCI-0.76)*100
+boot.resamp_field_1$upperCI.std <- (boot.resamp_field_1$upperCI-0.76)*100
+boot.resamp_field_1
+```
+
+
+Then a example of a plot
+
+```{r}
+par(mfrow = c(2,1))
+par(oma=c(3.8,2,2.5,2))
+par(mar=c(1.1,2.8,0.7,2))
+perc_vec <- rep(1:100)
+perc_vec
+
+a <-plot(perc_vec,boot.resamp$mean, ylim = c(0.6,1.), xlim = c(0,100), ann=FALSE, xaxt="n")
+arrows(perc_vec, boot.resamp$lowerCI, perc_vec,boot.resamp$upperCI, code = 3, angle = 90, length = 0.05)
+abline(v=25, col="red", lwd=3, lty=2)
+
+# Test field
+#mtext("3a",at=3.6, side=1, outer=F, cex=1.3, padj = -12.4)
+```
+
+################################################################################
+First load data from Data folder and calculate the density in each orthofoto
+FOr mark 2
+
+```{r}
+field_2 <- read.csv("G:/P8_projekt/Projekter/Prik_pr_billede/polypoints_m2_2.csv", sep = ',', dec = '.',
+                      header = TRUE)
+#field_2$m2[field_2$m2 > 10] = 6.68
+#quantile(field_2$m2)
+field_2$density <- field_2$droppings/field_2$m2
+mean(field_2$density)
+#View(field_2)
+mean(field_2$density)
+median(field_2$density)
+
+```
+
+Then resample with replacement 100 times.
+This resampling is done with a sample size from 1 to 100% of the original dataset.
+
+```{r}
+N <- 100
+
+mean_dens <- matrix(,nrow = N, ncol = 100)
+for (t in 1:100){
+  for (i in 1:N){
+  dens<- sample(field_2$density, replace = TRUE, size = (t/100)*length(field_2$density))
+  mean_dens[i,t] <- mean(dens)
+  
+  }}
+gns <- rep(NA,100)
+afv <- rep(NA,100)
+confd <- rep(NA,100)
+for (i in 1:100){
+  gns[i] <- mean(mean_dens[,i])
+  afv[i] <- sd(mean_dens[,i])
+  confd[i] <- afv[i]/sqrt(100) * 1.96
+}
+gns
+afv 
+confd
+#View(mean_dens)
+mean_dens[,1]
+
+mean(mean_dens[,1])
+var(mean_dens[,1])
+sd(mean_dens[,1])/sqrt(100)*1.96
+#plot(mean_dens[,1])
+```
+
+# Gør det med BCa bootstrap
+```{r}
+# install.packages("bootBCa", repos="http://R-Forge.R-project.org")
+library('bootBCa')
+
+
+boot.resamp <- cbind.data.frame(rep(NA,100),rep(NA,100),rep(NA,100))
+colnames(boot.resamp) <- c("mean","lowerCI","upperCI")
+for (i in 1:100){
+    boot <- BCa(mean_dens[,i],0.01,mean,
+                   alpha = c(0.025, 0.975),M = 100, Mlimit = 2000000)
+    boot <- cbind.data.frame(boot)
+    
+  boot.resamp$lowerCI[i] <- boot[4,]
+  boot.resamp$upperCI[i] <- boot[5,]
+  boot.resamp$mean[i] <- boot[3,]
+}
+
+boot.resamp
+```
+
+
+## Omregn til procenter (forsøg)
+```{r}
+
+boot.resamp_field_2 <- boot.resamp
+
+boot.resamp_field_2$mean.std <- (boot.resamp$mean-6.76)*100
+boot.resamp_field_2$lowerCI.std <- (boot.resamp$lowerCI-6.76)*100
+boot.resamp_field_2$upperCI.std <- (boot.resamp$upperCI-6.76)*100
+head(boot.resamp_field_2)
+```
+
+
+Then a example of a plot
+
+```{r}
+perc_vec <- rep(1:100)
+perc_vec
+
+a <-plot(perc_vec,boot.resamp$mean, ylim = c(6.2,7.4), xlim = c(0,100),
+         main="Field 2 Estimation of dropping densities by resampling", ann=FALSE)
+arrows(perc_vec, boot.resamp$lowerCI, perc_vec,boot.resamp$upperCI, code = 3, angle = 90, length = 0.05)
+
+
+mtext("Data resampled (%)",at=0.52, side=1, outer=T, cex=1.4, padj = 2)
+mtext(expression(Mean ~ droppings ~ m^{-2}), at=0.5, side=2, outer=T, cex=1.4, padj = 0)
+# mtext("Measured density by resampling", at=0.5, side=3, outer=T, cex=1.8, padj = 0)
+abline(v=25, col="red", lwd=3, lty=2)
+
+# Test field
+#mtext("3b",at=3.6, side=1, outer=F, cex=1.3, padj = -12.4)
+
+```
+
+############## FOrsøg med standardisering
+
+Then a example of a plot (standardiseret)
+
+```{r}
+par(mfrow = c(2,1))
+par(oma=c(3.8,2,2.5,2))
+par(mar=c(1.1,2.8,0.7,2))
+perc_vec <- rep(1:100)
+perc_vec
+
+a <-plot(perc_vec,boot.resamp_field_1$mean.std, ylim = c(-20.1,20.1), xlim = c(0,100), ann=FALSE, xaxt="n",cex.axis=1.1,pch = 19,cex=.7)
+arrows(perc_vec, boot.resamp_field_1$lowerCI.std, perc_vec,boot.resamp_field_1$upperCI.std, code = 3, angle = 90, length = 0.05)
+abline(v=25, col="red", lwd=3, lty=2)
+
+# Test field
+#mtext("3a",at=3.6, side=1, outer=F, cex=1.3, padj = -12.4)
+```
+
+
+Then a example of a plot (standardiseret)
+
+```{r}
+perc_vec <- rep(1:100)
+perc_vec
+
+a <-plot(perc_vec,boot.resamp_field_2$mean.std, ylim = c(-60.1,60.1), xlim = c(0,100),
+         main="Field 2 Estimation of dropping densities by resampling", ann=FALSE,cex.axis=1.1,pch = 19,cex=.7)
+arrows(perc_vec, boot.resamp_field_2$lowerCI.std, perc_vec,boot.resamp_field_2$upperCI.std, code = 3, angle = 90, length = 0.05)
+
+
+mtext("Data resampled (%)",at=0.52, side=1, outer=T, cex=1.6, padj = 2)
+mtext(expression(Difference ~ 'in' ~ mean ~ droppings ~ m^{-2} ~ '(%)'), at=0.5, side=2, outer=T, cex=1.6, padj = 0)
+# mtext("Measured density by resampling", at=0.5, side=3, outer=T, cex=1.8, padj = 0)
+abline(v=25, col="red", lwd=3, lty=2)
+
+# Test field
+#mtext("3b",at=3.6, side=1, outer=F, cex=1.3, padj = -12.4)
+
+```
+
